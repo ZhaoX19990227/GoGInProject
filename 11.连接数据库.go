@@ -8,7 +8,13 @@ import (
 )
 
 type UserInfo struct {
-	ID          int
+	gorm.Model // 内嵌
+	/**  包含以下四个字段
+	ID        uint `gorm:"primary_key"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt *time.Time `sql:"index"`
+	*/
 	Name        string
 	Age         int
 	CreatedTime time.Time
@@ -20,6 +26,8 @@ func main() {
 		fmt.Println(err)
 		panic("failed to connect database")
 	}
+	//禁止默认表名的复数形式
+	db.SingularTable(true)
 	defer db.Close()
 
 	//db.AutoMigrate(&UserInfo{})
