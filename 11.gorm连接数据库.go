@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
@@ -8,14 +9,17 @@ import (
 )
 
 type UserInfo struct {
-	gorm.Model // 内嵌
+	// gorm.Model // 内嵌
 	/**  包含以下四个字段
 	ID        uint `gorm:"primary_key"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt *time.Time `sql:"index"`
 	*/
-	Name        string
+	ID   int
+	Name sql.NullString `gorm:"default:'小猪佩奇'"`
+	//Name *string `gorm:"default:'小猪佩奇'"`
+	//Name        string  `gorm:"default:'小猪佩奇'"`
 	Age         int
 	CreatedTime time.Time
 }
@@ -30,12 +34,17 @@ func main() {
 	db.SingularTable(true)
 	defer db.Close()
 
-	//db.AutoMigrate(&UserInfo{})
+	db.AutoMigrate(&UserInfo{})
 	//
-	//wmChannel := UserInfo{1, "小胖", 25, time.Now()}
+	//	userInfo := UserInfo{1,"小胖", 25, time.Now()}
+	// name使用默认值插入到数据库
+	// 注意：0，'',""，false，其他空值，都不会插入到数据库
+	// 避免方式：使用指针或者实现Scanner/value的接口
+	userInfo := UserInfo{Age: 55, Name: sql.NullString{String: "", Valid: true}, CreatedTime: time.Now()}
+
 	//
 	//db.Create(&wmChannel)
-	var userInfo UserInfo
+	// var userInfo UserInfo
 	// 查询第一条记录
 	//if err := db.First(&userInfo).Error;err != nil {
 	//	if err == gorm.ErrRecordNotFound {
@@ -51,5 +60,10 @@ func main() {
 	//db.Model(&userInfo).Update("Age", 20)
 	// 删除
 	//db.Delete(&userInfo)
+
+	// 判断该对象是否为空
+	fmt.Println(db.NewRecord(&userInfo))
+	db.Debug().Create(&userInfo)
+	fmt.Println(db.NewRecord(&userInfo))
 	fmt.Printf("userInfo: %#v\n", userInfo)
 }
