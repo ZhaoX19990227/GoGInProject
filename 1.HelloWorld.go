@@ -31,6 +31,9 @@ func main() {
 
 	route.GET("/json", _json)
 
-	route.Run(":7777")
+	err := route.Run(":7777")
+	if err != nil {
+		return
+	}
 	// 本质就是对 http.ListenAndServe(":7777",route) 的进一步封装
 }
