@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/streadway/amqp"
 	"gopkg.in/yaml.v3"
+	_ "gopkg.in/yaml.v3"
 	"io/ioutil"
 	"log"
 	"strconv"
